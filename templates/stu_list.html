@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--先引入bootstrap的css-->
+    <link rel="stylesheet" href="{% static 'boot/css/bootstrap.min.css' %}">
+    <!--bootstrap整合jqgrid样式-->
+    <link rel="stylesheet" href="{% static 'jqgrid/css/trirand/ui.jqgrid-bootstrap.css' %}">
+    <!--引入jquery-->
+    <script src="{% static 'boot/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'boot/js/bootstrap.min.js' %}"></script>
+    <!--引入jqgrid相关的js-->
+    <script src="{% static 'jqgrid/js/i18n/grid.locale-cn.js' %}"></script>
+    <!--整个后的js-->
+    <script src="{% static 'jqgrid/js/trirand/jquery.jqGrid.min(1).js' %}"></script>
+    <script>
+        $(function () {
+            $("#table").jqGrid({
+                url: "{% url 'stu_app:get_stu' %}",
+                datatype: 'json',
+                autowidth: true,
+                styleUI: 'Bootstrap',
+                pager: "#pager",
+                rowNum: 2,
+                rowList: [2, 5, 10],
+                viewrecords: true,
+                cellEdit: true,
+                caption: "学生信息表",
+                toolbar: [true, 'top'],
+                multiselect: true,
+                cellurl: "",            // 编辑表单个单元格时发送请求的url
+                editurl: "{% url 'stu_app:edit_stu' %}",
+                colNames: ['ID', '姓名', '年龄', '生日', '班级', '操作'],
+                colModel: [
+                    {name: "id", align: 'center'},
+                    {name: 'name', align: 'center', editable: true},
+                    {name: 'age', align: 'center', editable: true},
+                    {name: 'bir', align: 'center', editable: true},
+                    {
+                        name: 'stu_class', align: 'center', editable: true, edittype: 'select',
+                        editoptions: {dataUrl: "{% url 'stu_app:get_class' %}",}
+                    },
+                    {
+                        name: 'option', formatter: function (cellvalue, options, row) {
+                            return "<button class=\"btn btn-warning\" id=\"edit\" onclick=\"edit(" + row.id + ")\"><span class=\"glyphicon glyphicon-edit\"></span> 修改</button> " +
+                                "<button class=\"btn btn-danger\" id=\"edit\" onclick=\"del(" + row.id + ")\"><span class=\"glyphicon glyphicon-edit\"></span> 删除</button>"
+
+                        }
+                    }
+                ],
+                // 事件的使用
+                onCellSelect: function (rowid, iCol, cellcontent, e) {
+                    // 向后台发送ajax请求
+                },
+                gridComplete: function () {
+
+                },
+                ondblClickRow: function () {
+                }
+            }).jqGrid("navGrid", "#pager", {add: false, del: false, edit: false, search: false, refresh: false});
+            /*
+            // 方法的使用
+            $("#add").click(function () {
+                // 点击按钮添加数据
+                $("#table").jqGrid('editGridRow', "new", {
+                    height: 300,
+                    reloadAfterSubmit: true
+                });
+            });
+            // 假删除
+            $("#del").click(function () {
+                $("#table").jqGrid("delRowData", 2)
+            });
+
+            // 删除
+            $("#del_real").click(function () {
+                var gr = $("#table").jqGrid('getGridParam', 'selrow');
+                if (gr != null)
+                    $("#table").jqGrid('delGridRow', gr, {
+                        reloadAfterSubmit: true
+                    });
+                else
+                    alert("请选择你要删除哪一行！！！！");
+            });
+
+            // 编辑一行
+            $("#edit").click(function () {
+                var gr = $("#table").jqGrid('getGridParam', 'selrow');
+                if (gr != null)
+                    $("#table").jqGrid('editGridRow', gr, {
+                        height: 300,
+                        reloadAfterSubmit: true
+                    });
+                else
+                    alert("请选择你要修改哪一行！！！！");
+            });*/
+
+            // 向toolbar工具栏中追加按钮
+            $("#t_table").append("<button class=\"btn btn-default\" id=\"add\" onclick='add()'>添加学生</button>");
+
+        });
+
+        // 封装删除操作
+        function edit(id) {
+            $("#table").jqGrid('editGridRow', id, {
+                height: 300,
+                reloadAfterSubmit: true
+            });
+        }
+
+        function add() {
+            $("#table").jqGrid('editGridRow', "new", {
+                height: 300,
+                reloadAfterSubmit: true
+            });
+        }
+
+        function del(id) {
+             $("#table").jqGrid('delGridRow', id, {
+                reloadAfterSubmit: true
+            });
+        }
+
+
+    </script>
+</head>
+<body>
+
+<div id="pager"></div>
+<table id="table"></table>
+
+{#<button class="btn btn-primary" id="add">添加学生</button>#}
+{#<button class="btn btn-danger" id="del">假删除</button>#}
+{#<button class="btn btn-danger" id="del_real">删除</button>#}
+{#<button class="btn btn-warning" id="edit"><span class="glyphicon glyphicon-edit"></span> 修改</button>#}
+
+</body>
+</html>

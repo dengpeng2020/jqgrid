@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--引入bootstrap的css-->
+    <link rel="stylesheet" href="../static/boot/css/bootstrap.min.css">
+    <!--引入jqgrid相关的css-->
+    <link rel="stylesheet" href="../static/jqgrid/css/css/cupertino/jquery-ui-1.8.16.custom.css">
+    <link rel="stylesheet" href="../static/jqgrid/css/ui.jqgrid.css">
+    <!--引入js文件-->
+    <script src="../static/boot/js/jquery-3.3.1.min.js"></script>
+    <script src="../static/boot/js/bootstrap.min.js"></script>
+    <script src="../static/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script src="../static/jqgrid/js/jquery.jqGrid.src.js"></script>
+    <style>
+        .aa {
+            background: #1b6d85;
+        }
+    </style>
+    <script>
+        // 页面加载的时候执行此方法中的所有函数
+        $(function () {
+            // 创建表格的方式
+            $("#list").jqGrid({
+                url: "../static/json/user_page.json",            // 从指定的url中获取数据填充表格
+                datatype: "json",   // 指定从服务端返回的数据类型
+                cellEdit: true,     // 开启全局的单元格可编辑
+                autowidth: true,    // 表格自适应父容器
+                pager: "#pager",    // 生成分页工具栏
+                rowNum: 2,          // 指定每页显示的条数
+                rowList: [2, 5, 10],//  改变显示的条数
+                viewrecords: true,  // 显示总记录数
+                caption: "员工信息表",   // 表格名称
+                hidegrid: false,    // 禁用表格隐藏显示按钮
+                multiselect: true,  // 定义是否可以多选
+                rownumbers: true,   // 显示表格的行号
+                editurl: "/user/user/",        // 编辑表单时发送请求的url
+                toolbar: [true, 'both'],            // 显示工具栏  只有一个时工具栏的id为 t_表格id  上下都有时 上：t_id xia: tb_id
+                colNames: ["ID", "姓名", "年龄", "生日"],     // 表格的表头
+                // 表格每一列的值
+                colModel: [
+                    {name: "id", align: "center", classes: "aa", hidden: false},
+                    {
+                        name: "name", align: "center", editable: true, edittype: "select",
+                        // 为可编辑的select框提供选择值
+                        editoptions: {value: "1:lisa;2:marry;3:jack"}    // 写死的数据
+                        // editoptions: {dataUrl: ""},      // 从服务端动态获取值进行填充  返回的数据必须是准备好的html select框
+                    },
+                    {
+                        name: "age", align: "center", editable: true, formatter: function (cellvalue, options, rowObject) {
+                            console.log(cellvalue);     // 当前单元格的值
+                            console.log(options);       // 当前表格的参数以及当前行的值
+                            console.log(rowObject.id);     // 当前单元格所在的行的值
+                            if (cellvalue<22){
+                                return "<span style='background: red'>少年</span>";
+                            }
+                            return "中年";
+                        }
+                    },
+                    {name: "bir", align: "center", editable: true}],
+            }).jqGrid("navGrid", "#pager", {add: true, edit: true, del: false, search: false, refresh: false});
+        })
+    </script>
+</head>
+<body>
+<!--表格的容器-->
+<table id="list"></table>
+
+<!--分页工具栏的容器-->
+<div id="pager"></div>
+
+</body>
+</html>
